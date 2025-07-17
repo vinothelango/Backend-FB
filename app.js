@@ -4,7 +4,6 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const dotenv = require('dotenv')
 const admin = require("./firebase");
-
 const User = require("./models/Users");
 
 dotenv.config()
@@ -22,6 +21,10 @@ app.use(cros())
     })
     .then(()=>console.log("MongoDB connected"))
     .catch(err=>console.error("MongoDB connection error:", err));
+    
+    app.get('/', (req, res) => {
+  res.send('Backend running successfully!');
+});
 
 async function verifyToken(req, res, next) {
   const idToken = req.headers.authorization;
