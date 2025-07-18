@@ -11,8 +11,9 @@ dotenv.config()
 const app = express()
 app.use(bodyParser.json())
 
-const cros = require('cors')
-app.use(cros())
+const cors = require('cors')
+app.use(cors())
+
 
 
     mongoose.connect(process.env.MONGO_URI,{
@@ -46,8 +47,9 @@ async function verifyToken(req, res, next) {
 
 
     app.post("/api/protected",verifyToken,async(req,res)=>{
+      console.log("Verified user:", req.user);
         const {uid,name,email,picture}=req.user
-
+        try{
         let user = await User.findOne({uid})
 
         if(!user){
@@ -57,8 +59,22 @@ async function verifyToken(req, res, next) {
         }
         res.json(user)
         res.status(201).json({message:"Token verifyed successfully"})
+      
         console.log("Verified Succfully")
-    })
+      
+      
+  }
+ 
+catch (error) {
+    console.error("Error in /api/protected:", error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+      error: error.message
+    });
+  }
+});
+  
+  
 
    const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
